@@ -1,18 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Item : MonoBehaviour
 {
     public int ID_Item;
     public string Name_Item;
+
     private SpriteRenderer sprite;
     private Color normalColor;
-    [SerializeField] private Color highlightColor = Color.yellow;
+    private Color highlightColor = Color.gray;
     private bool isHighlighted = false;
 
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
-        normalColor = GetComponent<SpriteRenderer>().color;
+        normalColor = Color.white;
+        SetHighlight(false);
     }
 
     public void SetHighlight(bool on)
@@ -33,10 +35,11 @@ public class Item : MonoBehaviour
 
     public virtual void PickUp()
     {
+        SetHighlight(false);
         Sprite itemIcon = GetComponent<SpriteRenderer>().sprite;
         if (UI_Notice.Instance != null)
         {
-            UI_Notice.Instance.ShowNotice(Name_Item, itemIcon);
+            UI_Notice.Instance.ShowNotice("Nhặt " + Name_Item, itemIcon);
         }
     }
 

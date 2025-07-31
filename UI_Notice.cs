@@ -25,6 +25,7 @@ public class UI_Notice : MonoBehaviour
     public GameObject popUpPrefab;
     public int maxPopUp;
     public float popUpDuration = 5f;
+
     public readonly Queue<GameObject> activePopUps = new Queue<GameObject>();
 
     public void ShowNotice(string ItemName, Sprite icon)
@@ -44,7 +45,6 @@ public class UI_Notice : MonoBehaviour
         //Fade out and Destroy
         StartCoroutine(FadeOutAndDestroy(newPopUp));
     }
-
 
     private IEnumerator FadeOutAndDestroy(GameObject popUp)
     {

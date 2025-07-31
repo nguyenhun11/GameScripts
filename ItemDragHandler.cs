@@ -9,6 +9,10 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public Transform originalParent;
     public CanvasGroup canvasGroup;
 
+    [SerializeField] private float minDropDistance = 2f;
+    [SerializeField] private float maxDropDistance = 3f;
+
+
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -60,9 +64,48 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
         else
         {
-            transform.SetParent(originalParent);
+            //Drop out of inventory
+            if (!IsWithinInventory(eventData.position))
+            {
+                DropItem(originalSlot);
+                Controller_Menu.Instance.SetActiveMenu(false);
+            }
+            // Return back if cant find new slot
+            else
+            {
+                transform.SetParent(originalParent);
+            }
         }
         GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+    }
+
+    private bool IsWithinInventory(Vector2 mousePosition)
+    {
+        RectTransform menuPanelRect = originalParent.parent.GetComponent<RectTransform>();
+        return RectTransformUtility.RectangleContainsScreenPoint(menuPanelRect, mousePosition); 
+    }
+
+    private void DropItem(Slot originalSlot)
+    {
+        originalSlot.currentItem = null;
+        //Find player
+        Transform playerTranform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (playerTranform == null)
+        {
+            Debug.Log("Can't find player");
+            return;
+        }
+
+        //Drop position
+        Vector2 dropOffset = Random.insideUnitCircle.normalized * Random.Range(minDropDistance, maxDropDistance);
+        Vector2 dropPosition = (Vector2)playerTranform.position + dropOffset;
+        
+        //Instantiate
+        GameObject newItem = Instantiate(gameObject, dropPosition, Quaternion.identity);
+        newItem.GetComponent<Effect_ItemBounce>()?.StartBounce();//Bounce effect
+
+        //Destroy UI
+        Destroy(gameObject);
     }
 
 }

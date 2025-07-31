@@ -1,24 +1,23 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float MOVE_SPEED = 5f;
+    private bool canMove;
     private Vector2 direction;
-    private GameObject PLAYER;
-    public new Rigidbody2D rigidbody2D;
-    private PlayerControl playerControl;
+    private new Rigidbody2D rigidbody2D;
+
     private Animator animator;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        PLAYER = GameObject.FindGameObjectWithTag("Player");
         rigidbody2D = GetComponent<Rigidbody2D>();
-        playerControl = GetComponent<PlayerControl>();
         animator = GetComponent<Animator>();
+        canMove = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
         FixRotation();
@@ -26,8 +25,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rigidbody2D.linearVelocity = direction * MOVE_SPEED;
+        if (canMove)
+        {
+            rigidbody2D.linearVelocity = direction * MOVE_SPEED;
+        }
     }
+
     public void Move(InputAction.CallbackContext context)
     {
         animator.SetBool("isMoving", true);
@@ -47,8 +50,14 @@ public class PlayerMovement : MonoBehaviour
         gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
-    private void UpdateAnimation()
+    public void StopMove()
     {
-       
+        canMove = false;
     }
+
+    public void CanMove()
+    {
+        canMove = true;
+    }
+
 }

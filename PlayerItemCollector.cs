@@ -16,8 +16,9 @@ public class PlayerItemCollector : MonoBehaviour
     {
         if (CanPickItem)
         {
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
+                itemToPick.SetHighlight(false);
                 bool canAddItem = inventory.AddItem(itemToPick.gameObject);
                 if (canAddItem)
                 {
@@ -26,7 +27,10 @@ public class PlayerItemCollector : MonoBehaviour
                 }
                 else
                 {
-                    UI_Notice.Instance.ShowNotice("Túi đã đầy", null);
+                    Sprite icon = GetComponent<SpriteRenderer>().sprite;
+                    UI_Notice.Instance.ShowNotice("Túi đã đầy", icon);
+                    itemToPick = null;
+                    CanPickItem = false;
                 }
             }
         }
@@ -36,13 +40,16 @@ public class PlayerItemCollector : MonoBehaviour
     {
         if (collision.CompareTag("Item"))
         {
-            Item item = collision.GetComponent<Item>();
-            if (item != null)
+            if (itemToPick == null)
             {
-                item.SetHighlight(true);
-                itemToPick = item;
+                Item item = collision.GetComponent<Item>();
+                if (item != null)
+                {
+                    item.SetHighlight(true);
+                    itemToPick = item;
+                }
+                CanPickItem = true;
             }
-            CanPickItem = true;
         }
     }
 
