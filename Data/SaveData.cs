@@ -7,4 +7,6 @@ public class SaveData
     public Vector3 playerPosition;
     public List<SlotItemSaveData> inventorySaveData;
     public List<SlotItemSaveData> hotbarSaveData;
+    public List<ChestSaveData> chestSaveData;
 }
+
