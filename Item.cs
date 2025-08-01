@@ -35,6 +35,7 @@ public class Item : MonoBehaviour
 
     public virtual void PickUp()
     {
+        SoundEffectManager.Play("PickUp");
         SetHighlight(false);
         Sprite itemIcon = GetComponent<SpriteRenderer>().sprite;
         if (UI_Notice.Instance != null)

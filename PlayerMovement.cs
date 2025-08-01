@@ -5,7 +5,6 @@ using UnityEngine.Rendering;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float MOVE_SPEED = 5f;
-    private bool canMove;
     private Vector2 direction;
     private new Rigidbody2D rigidbody2D;
 
@@ -15,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        canMove = true;
     }
 
     void Update()
@@ -25,15 +23,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (canMove)
+        if (Controller_Pause.isGamePaused)
         {
-            rigidbody2D.linearVelocity = direction * MOVE_SPEED;
+            Pause();
+            return;
         }
+        rigidbody2D.linearVelocity = direction * MOVE_SPEED;
+        animator.SetBool("isMoving", rigidbody2D.linearVelocity.magnitude > 0);
+
     }
 
     public void Move(InputAction.CallbackContext context)
     {
-        animator.SetBool("isMoving", true);
         if (context.canceled)
         {
             animator.SetFloat("LastX", direction.x);
@@ -50,14 +51,10 @@ public class PlayerMovement : MonoBehaviour
         gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
-    public void StopMove()
+    private void Pause()
     {
-        canMove = false;
-    }
-
-    public void CanMove()
-    {
-        canMove = true;
+        rigidbody2D.linearVelocity = Vector2.zero;
+        animator.SetBool("isMoving", false);
     }
 
 }

@@ -29,6 +29,10 @@ public class Controller_Menu : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Tab))
         {
+            if (!menuCanvas.activeSelf && Controller_Pause.isGamePaused)
+            {
+                return;
+            }
             SetActiveMenu(!menuCanvas.activeSelf);
         }
     }
@@ -37,13 +41,6 @@ public class Controller_Menu : MonoBehaviour
     public void SetActiveMenu(bool on)
     {
         menuCanvas.SetActive(on);
-        if (on)
-        {
-            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().StopMove();
-        }
-        else
-        {
-            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().CanMove();
-        }
+        Controller_Pause.SetPause(menuCanvas.activeSelf);
     }
 }

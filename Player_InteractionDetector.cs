@@ -30,6 +30,7 @@ public class Player_InteractionDetector : MonoBehaviour
         {
             interactableInRange = interactable;
             interactionIcon.SetActive(true);
+            SoundEffectManager.Play("Interact");
         }
     }
 
