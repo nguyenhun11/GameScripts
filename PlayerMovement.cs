@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float MOVE_SPEED = 5f;
     private Vector2 direction;
     private new Rigidbody2D rigidbody2D;
+    private bool isPlayingWalk = false;
+    public float walkSpeed = 0.5f;
 
     private Animator animator;
 
@@ -30,10 +32,18 @@ public class PlayerMovement : MonoBehaviour
         }
         rigidbody2D.linearVelocity = direction * MOVE_SPEED;
         animator.SetBool("isMoving", rigidbody2D.linearVelocity.magnitude > 0);
-
+        if (rigidbody2D.linearVelocity.magnitude > 0
+            && !isPlayingWalk)
+        {
+            StartWalk();
+        }
+        else if (rigidbody2D.linearVelocity.magnitude == 0)
+        {
+            StopWalk();
+        }
     }
 
-    public void Move(InputAction.CallbackContext context)
+    public void SetMoveAnimator(InputAction.CallbackContext context)
     {
         if (context.canceled)
         {
@@ -55,6 +65,23 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidbody2D.linearVelocity = Vector2.zero;
         animator.SetBool("isMoving", false);
+        StopWalk();
     }
 
+    private void StartWalk()
+    {
+        isPlayingWalk = true;
+        InvokeRepeating(nameof(PlayWalkSound), 0f, walkSpeed);
+    }
+
+    private void StopWalk()
+    {
+        isPlayingWalk = false;
+        CancelInvoke(nameof(PlayWalkSound));
+    }
+
+    private void PlayWalkSound()
+    {
+        SoundEffectManager.Play("Walk", true);
+    }
 }

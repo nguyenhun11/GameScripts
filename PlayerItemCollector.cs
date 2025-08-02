@@ -42,7 +42,6 @@ public class PlayerItemCollector : MonoBehaviour
         {
             if (itemToPick == null)
             {
-                SoundEffectManager.Play("Interact");
                 Item item = collision.GetComponent<Item>();
                 if (item != null)
                 {

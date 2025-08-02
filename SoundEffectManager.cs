@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class SoundEffectManager : MonoBehaviour
 {
     private static AudioSource audioSource;
+    private static AudioSource randomPitchAudioSource;
     private static SoundEffectLibrary soundEffectLibrary;
     [SerializeField] private Slider soundEffectSlider;
    
@@ -15,9 +16,12 @@ public class SoundEffectManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            audioSource = GetComponent<AudioSource>(); 
+            AudioSource[] audioSources = GetComponents<AudioSource>(); 
+            audioSource = audioSources[0];
+            randomPitchAudioSource = audioSources[1];
+
             soundEffectLibrary = GetComponent<SoundEffectLibrary>();
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -34,18 +38,28 @@ public class SoundEffectManager : MonoBehaviour
         });
     }
 
-    public static void Play(string soundName)
+    public static void Play(string soundName, bool randomPitch = false)
     {
         AudioClip clip = soundEffectLibrary.GetRandomClip(soundName);
         if (clip != null)
         {
-            audioSource.PlayOneShot(clip);
+            if (randomPitch)
+            {
+                randomPitchAudioSource.pitch = Random.Range(0.5f, 1.5f);
+                
+                audioSource.PlayOneShot(clip);
+            }
+            else
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
     }
 
     public static void SetVolume(float volume)
     {
         audioSource.volume = volume;
+        randomPitchAudioSource.volume = volume;
     }
 
     public void OnValueChange()

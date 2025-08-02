@@ -25,6 +25,7 @@ public class Item : MonoBehaviour
         {
             sprite.color = highlightColor;
             isHighlighted = true;
+            SoundEffectManager.Play("Interact");
         }
         else if (!on && isHighlighted)
         {
