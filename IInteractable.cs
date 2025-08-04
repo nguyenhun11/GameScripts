@@ -4,4 +4,5 @@ public  interface IInteractable
 
     public bool CanInteract();
 
+    public void SetHighLight(bool on = true);
 }

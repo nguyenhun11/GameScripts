@@ -43,4 +43,8 @@ public class Chest : MonoBehaviour, IInteractable
         }
     }
 
+    public void SetHighLight(bool on = true)
+    {
+        return;
+    }
 }

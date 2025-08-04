@@ -29,8 +29,12 @@ public class Player_InteractionDetector : MonoBehaviour
             && interactable.CanInteract())
         {
             interactableInRange = interactable;
+            interactableInRange.SetHighLight(true);
             interactionIcon.SetActive(true);
             SoundEffectManager.Play("Interact");
+            if (collision.TryGetComponent(out NPC_WaypointMover mover)){
+                mover.StopMove();
+            }
         }
     }
 
@@ -39,8 +43,13 @@ public class Player_InteractionDetector : MonoBehaviour
         if (collision.TryGetComponent(out IInteractable interactable) 
             && interactable == interactableInRange)
         {
+            interactableInRange.SetHighLight(false); 
             interactableInRange = null;
             interactionIcon.SetActive(false);
+            if (collision.TryGetComponent(out NPC_WaypointMover mover))
+            {
+                mover.StopMove(false);
+            }
         }
     }
 }

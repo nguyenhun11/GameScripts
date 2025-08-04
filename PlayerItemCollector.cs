@@ -18,7 +18,7 @@ public class PlayerItemCollector : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                itemToPick.SetHighlight(false);
+                itemToPick.SetHighLight(false);
                 bool canAddItem = inventory.AddItem(itemToPick.gameObject);
                 if (canAddItem)
                 {
@@ -45,7 +45,7 @@ public class PlayerItemCollector : MonoBehaviour
                 Item item = collision.GetComponent<Item>();
                 if (item != null)
                 {
-                    item.SetHighlight(true);
+                    item.SetHighLight(true);
                     itemToPick = item;
                 }
                 CanPickItem = true;
@@ -60,7 +60,7 @@ public class PlayerItemCollector : MonoBehaviour
             Item item = collision.GetComponent<Item>();
             if (item != null)
             {
-                item.SetHighlight(false);
+                item.SetHighLight(false);
                 itemToPick = null;
             }
             CanPickItem = false;

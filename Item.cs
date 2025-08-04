@@ -14,10 +14,10 @@ public class Item : MonoBehaviour
     {
         sprite = GetComponent<SpriteRenderer>();
         normalColor = Color.white;
-        SetHighlight(false);
+        SetHighLight(false);
     }
 
-    public void SetHighlight(bool on)
+    public void SetHighLight(bool on)
     {
         if (sprite == null) return;
 
@@ -37,7 +37,7 @@ public class Item : MonoBehaviour
     public virtual void PickUp()
     {
         SoundEffectManager.Play("PickUp");
-        SetHighlight(false);
+        SetHighLight(false);
         Sprite itemIcon = GetComponent<SpriteRenderer>().sprite;
         if (UI_Notice.Instance != null)
         {
