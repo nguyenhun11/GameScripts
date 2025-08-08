@@ -8,8 +8,19 @@ public class NPC_Dialogue : ScriptableObject
     public Sprite avt_NPC;
     public string[] dialogueLines;
     public bool[] autoProgressLines;
+    public bool[] endDialogueLines;
     public float autoProgressDelay = 1.5f;
     public float typingSpeed = 0.05f;
     public AudioClip voiceSound;
     public float voicePitch = 1f;
+
+    public DialogueChoice[] choices;
+}
+
+[System.Serializable]
+public class DialogueChoice
+{
+    public int dialogueIndex;//Dialogue line where choose appear
+    public string[] choices;//Response option;
+    public int[] nextDialogueIndexes;//Where choice lead
 }

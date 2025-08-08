@@ -11,6 +11,16 @@ public class Controller_Inventory : MonoBehaviour
     public GameObject[] itemPrefaps;
     private ItemDictionary itemDictionary;
 
+    #region singleton
+    public static Controller_Inventory Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+    #endregion
+
     void Start()
     {
         itemDictionary = FindFirstObjectByType<ItemDictionary>();
@@ -28,7 +38,8 @@ public class Controller_Inventory : MonoBehaviour
                 inventorySaveDatas.Add(new SlotItemSaveData { 
                     ID_Item = item.ID_Item, 
                     Name_Item = item.Name_Item,
-                    slot_Index = slotTransform.GetSiblingIndex()
+                    slot_Index = slotTransform.GetSiblingIndex(),
+                    count = item.count
                 });
             }
         }
@@ -43,7 +54,7 @@ public class Controller_Inventory : MonoBehaviour
             Destroy(slotTransform.gameObject);
         }
         //Create new slot
-        for(int i = 0; i< slotCount; i++)
+        for (int i = 0; i < slotCount; i++)
         {
             Instantiate(slotPrefab, inventoryPanel.transform);
         }
@@ -58,6 +69,14 @@ public class Controller_Inventory : MonoBehaviour
                 {
                     GameObject item = Instantiate(itemPrefab, slot.transform);
                     item.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    
+                    Item itemComponent = item.GetComponent<Item>();
+                    if (itemComponent != null && data.count > 1)
+                    {
+                        itemComponent.count = data.count;
+                        itemComponent.UpdateCountDisplay();
+                    }
+
                     slot.currentItem = item;
                 }
             }
@@ -67,6 +86,28 @@ public class Controller_Inventory : MonoBehaviour
 
     public bool AddItem(GameObject item)
     {
+        Item itemToAdd = item.GetComponent<Item>();
+        if (itemToAdd == null)
+        {
+            return false;
+        }
+        //Check if already has this item
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if (slot != null && slot.currentItem != null)
+            {
+                Item slotItem = slot.currentItem.GetComponent<Item>();
+                if (slotItem != null && slotItem.ID_Item == itemToAdd.ID_Item)
+                {
+                    //Add count this item
+                    slotItem.AddToStack();
+                    return true;
+                }
+            }
+        }
+
+        //Look for empty slot
         foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot = slotTransform.GetComponent<Slot>();

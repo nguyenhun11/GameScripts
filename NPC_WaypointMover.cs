@@ -80,11 +80,13 @@ public class NPC_WaypointMover : MonoBehaviour
             localTempMoveSpeed = moveSpeed;
             moveSpeed = 0f;
             isStopped = true;
+            isWaiting = true;
         }
         else if (isStopped)
         {
             moveSpeed = localTempMoveSpeed;
             isStopped = false;
+            isWaiting = false;
         }
     }
 
