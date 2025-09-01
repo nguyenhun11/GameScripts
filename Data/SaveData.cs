@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,5 +9,7 @@ public class SaveData
     public List<SlotItemSaveData> inventorySaveData;
     public List<SlotItemSaveData> hotbarSaveData;
     public List<ChestSaveData> chestSaveData;
+    public List<QuestProgress> questProgressData;
+    public List<string> handInQuestIDs;
 }
 

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,6 +11,9 @@ public class Controller_Inventory : MonoBehaviour
     public int slotCount;
     public GameObject[] itemPrefaps;
     private ItemDictionary itemDictionary;
+    Dictionary<int, int> itemsCountCache = new();
+    public event Action OnInventoryChanged; //event to notify quest system
+
 
     #region singleton
     public static Controller_Inventory Instance { get; private set; }
@@ -24,7 +28,29 @@ public class Controller_Inventory : MonoBehaviour
     void Start()
     {
         itemDictionary = FindFirstObjectByType<ItemDictionary>();
+        RebuildItemCounts();
     }
+
+    public void RebuildItemCounts()
+    {
+        itemsCountCache.Clear();
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if (slot.currentItem != null)
+            {
+                Item item = slot.currentItem.GetComponent<Item>();
+                if (item != null)
+                {
+                    itemsCountCache[item.ID_Item] = itemsCountCache.GetValueOrDefault(item.ID_Item, 0) + item.count;//Explain
+                }
+            }
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    public Dictionary<int, int> GetItemsCount() => itemsCountCache;
+
 
     public List<SlotItemSaveData> GetInventoryItems()
     {
@@ -81,6 +107,7 @@ public class Controller_Inventory : MonoBehaviour
                 }
             }
         }
+        RebuildItemCounts();
     }
 
 
@@ -102,6 +129,7 @@ public class Controller_Inventory : MonoBehaviour
                 {
                     //Add count this item
                     slotItem.AddToStack();
+                    RebuildItemCounts();
                     return true;
                 }
             }
@@ -116,11 +144,35 @@ public class Controller_Inventory : MonoBehaviour
                 GameObject newItem = Instantiate(item, slot.transform);
                 newItem.GetComponent<RectTransform>().anchoredPosition= Vector2.zero;
                 slot.currentItem = newItem;
+                RebuildItemCounts();
                 return true;
             }
         }
         Debug.Log("Inventory is full!!");
         return false;
+    }
+
+    public void RemoveItemFromInventory(int itemID, int amount)
+    {
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            if (amount <= 0) break;
+            Slot slot = slotTransform.GetComponent<Slot>();
+
+            if (slot?.currentItem?.GetComponent<Item>() is Item item && item.ID_Item == itemID)
+            {
+                int removed = Mathf.Min(amount, item.count);
+                item.RemoveFromStack(removed);
+
+                amount -= removed; // amount left
+                if (item.count == 0)
+                {
+                    Destroy(slot.currentItem);
+                    slot.currentItem = null;
+                }
+            }
+        }
+        RebuildItemCounts();
     }
     
 }

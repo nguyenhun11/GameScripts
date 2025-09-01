@@ -25,21 +25,25 @@ public class Controller_Save : MonoBehaviour
             playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position,
             inventorySaveData = inventory.GetInventoryItems(),
             hotbarSaveData = hotbar.GetHotbarItems(),
-            chestSaveData = GetChestsState()
+            chestSaveData = GetChestsState(),
+            questProgressData = Controller_Quest.Instance.activeQuests,
+            handInQuestIDs = Controller_Quest.Instance.handinQuestIDs
         };
-        File.WriteAllText(saveLocation, JsonUtility.ToJson(saveData));
+        File.WriteAllText(saveLocation, JsonUtility.ToJson(saveData));//from CS to JSON
     }
 
     public void LoadGame()
     {
         if (File.Exists(saveLocation))
         {
-            SaveData saveData = JsonUtility.FromJson<SaveData>(File.ReadAllText(saveLocation));
+            SaveData saveData = JsonUtility.FromJson<SaveData>(File.ReadAllText(saveLocation)); //from JSON to CS (SaveData)
             
             GameObject.FindGameObjectWithTag("Player").transform.position = saveData.playerPosition;
             inventory.SetInventoryItem(saveData.inventorySaveData);
             hotbar.SetHotbarItem(saveData.hotbarSaveData);
             LoadChestsState(saveData.chestSaveData);
+            Controller_Quest.Instance.LoadQuestProgress(saveData.questProgressData);
+            Controller_Quest.Instance.handinQuestIDs = saveData.handInQuestIDs;
         }
         else
         {

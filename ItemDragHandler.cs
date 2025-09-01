@@ -146,6 +146,8 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             Destroy(gameObject);
         }
+
+        Controller_Inventory.Instance.RebuildItemCounts();//Quest count
     }
 
     public void OnPointerClick(PointerEventData eventData)
